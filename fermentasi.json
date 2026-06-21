@@ -1,0 +1,5 @@
+[
+  {"id":"f001","nama_batch":"Flores Bajawa #03","jenis_proses":"Honey Process","berat_kg":25,"tgl_mulai":"2026-06-10","tgl_target":"2026-06-21","status":"aktif","catatan":""},
+  {"id":"f002","nama_batch":"Toraja Sapan #07","jenis_proses":"Natural","berat_kg":30,"tgl_mulai":"2026-06-17","tgl_target":"2026-06-23","status":"aktif","catatan":""},
+  {"id":"f003","nama_batch":"Gayo Arabika #11","jenis_proses":"Washed","berat_kg":20,"tgl_mulai":"2026-06-12","tgl_target":"2026-06-19","status":"selesai","catatan":"Siap roasting"}
+]

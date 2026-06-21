@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#5C2D0A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bajang Coffee</title>
+<link rel="manifest" href="/manifest.json">
+<style>
+:root{
+  --coklat:#5C2D0A;--coklat2:#3d1505;--coklat3:#7a3d10;
+  --cream:#f5f0eb;--cream2:#fdf6f0;--border:#e8ddd4;
+  --muted:#8b6b5a;--text:#3d1505;
+  --green:#2e7d32;--green-bg:#e8f5e9;
+  --red:#c0392b;--red-bg:#ffe8e8;
+  --amber:#e07b2a;--amber-bg:#fff0e0;
+  --blue:#1a5276;--blue-bg:#e8f4fd;
+  --r:10px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;background:#fff;position:relative;overflow:hidden}
+.topbar{background:var(--coklat);padding:env(safe-area-inset-top) 0 0;flex-shrink:0}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 12px}
+.logo-row{display:flex;align-items:center;gap:8px}
+.logo-circle{width:32px;height:32px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--coklat)}
+.app-title{color:#fff;font-size:15px;font-weight:600}
+.app-sub{color:#c8956b;font-size:9px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.notif-btn{background:rgba(255,255,255,0.15);border-radius:7px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;border:none;color:#fff;font-size:10px}
+.ndot{width:7px;height:7px;background:#ff6b35;border-radius:50%;display:inline-block}
+.page-label{color:rgba(255,255,255,0.7);font-size:11px}
+
+.content-area{flex:1;overflow-y:auto;background:var(--cream);padding-bottom:70px}
+.content-area::-webkit-scrollbar{width:3px}
+.content-area::-webkit-scrollbar-thumb{background:var(--border)}
+
+.bottomnav{background:var(--coklat);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));flex-shrink:0}
+.nav-item{flex:1;text-align:center;cursor:pointer;padding:2px 0;border:none;background:none}
+.nav-item i{font-size:20px;color:rgba(255,255,255,0.45);display:block}
+.nav-item span{font-size:9px;color:rgba(255,255,255,0.45);display:block;margin-top:1px}
+.nav-item.active i,.nav-item.active span{color:#fff}
+.nav-item.active span{color:#f5c99a}
+
+/* ── CARDS & COMMON ── */
+.card{background:#fff;border-radius:var(--r);border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px}
+.card-title{font-size:12px;font-weight:600;color:var(--coklat);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card-title i{font-size:15px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px 4px}
+.stat-card{background:#fff;border-radius:var(--rs);padding:10px 12px;border:0.5px solid var(--border)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-bottom:3px}
+.stat-val{font-size:18px;font-weight:600;color:var(--coklat2);line-height:1.2}
+.stat-sub{font-size:9px;color:var(--coklat);margin-top:2px}
+.stat-sub.warn{color:var(--amber)}
+.stat-sub.ok{color:var(--green)}
+.stat-sub.bad{color:var(--red)}
+
+.section{padding:10px 12px 4px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.section-title{font-size:12px;font-weight:600;color:var(--coklat)}
+.section-link{font-size:10px;color:var(--amber);cursor:pointer;border:none;background:none;padding:0}
+
+.badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:5px;font-weight:500}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--rs);padding:10px 14px;font-size:12px;font-weight:500;cursor:pointer;transition:opacity 0.15s}
+.btn:active{opacity:0.8}
+.btn-primary{background:var(--coklat);color:#fff}
+.btn-secondary{background:var(--cream);color:var(--coklat);border:0.5px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-full{width:100%}
+
+.form-group{margin-bottom:12px}
+.form-label{font-size:11px;color:var(--muted);margin-bottom:4px;display:block}
+.form-input{width:100%;background:#fff;border:0.5px solid var(--border);border-radius:var(--rs);padding:9px 12px;font-size:13px;color:var(--text);outline:none}
+.form-input:focus{border-color:var(--coklat)}
+.form-select{width:100%;background:#fff;border:0.5px solid var(--border);border-radius:var(--rs);padding:9px 12px;font-size:13px;color:var(--text);outline:none;appearance:none}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ── ALERT STRIP ── */
+.alert-strip{margin:10px 12px 0;background:var(--amber-bg);border-radius:var(--r);padding:10px 12px;border-left:3px solid var(--amber)}
+.alert-strip-title{font-size:11px;font-weight:600;color:var(--coklat);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.alert-strip i{font-size:14px;color:var(--amber)}
+.alert-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.alert-name{font-size:10px;color:#6b4a35}
+
+/* ── ORDER LIST ── */
+.order-item{background:#fff;border-radius:var(--rs);padding:10px 12px;margin:0 12px 6px;border:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.order-name{font-size:12px;font-weight:500;color:var(--text)}
+.order-detail{font-size:10px;color:var(--muted);margin-top:2px}
+.order-price{font-size:13px;font-weight:600;color:var(--coklat)}
+
+/* ── POS ── */
+.pos-nama-bar{padding:8px 12px 6px;display:flex;gap:6px}
+.pos-nama-bar input{flex:1;background:#fff;border:0.5px solid var(--border);border-radius:var(--rs);padding:8px 11px;font-size:12px;color:var(--text);outline:none}
+.pos-nama-bar input:focus{border-color:var(--coklat)}
+.cat-bar{display:flex;gap:6px;padding:4px 12px 8px;overflow-x:auto}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat-pill{background:#fff;border:0.5px solid var(--border);border-radius:20px;padding:5px 13px;font-size:11px;color:var(--coklat);white-space:nowrap;cursor:pointer;flex-shrink:0}
+.cat-pill.active{background:var(--coklat);color:#fff;border-color:var(--coklat)}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 12px 8px}
+.menu-card{background:#fff;border-radius:var(--rs);padding:10px;border:0.5px solid var(--border);cursor:pointer;transition:border-color 0.15s}
+.menu-card.selected{border:1.5px solid var(--coklat);background:var(--cream2)}
+.menu-card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.menu-icon{width:32px;height:32px;background:var(--cream);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.menu-icon i{font-size:17px;color:var(--coklat)}
+.menu-name{font-size:11px;font-weight:500;color:var(--text);line-height:1.3}
+.menu-price{font-size:12px;font-weight:600;color:var(--coklat)}
+.menu-hpp{font-size:9px;color:var(--muted)}
+.qty-row{display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:6px;margin-top:4px}
+.qty-btn{width:24px;height:24px;border-radius:5px;border:0.5px solid var(--border);background:var(--cream);color:var(--coklat);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;font-weight:600}
+.qty-num{font-size:12px;font-weight:600;color:var(--text)}
+
+/* Cart */
+.cart-panel{background:#fff;border-top:0.5px solid var(--border);flex-shrink:0}
+.cart-header{padding:8px 12px 4px;display:flex;align-items:center;justify-content:space-between}
+.cart-nama{display:flex;align-items:center;gap:5px}
+.cart-nama i{font-size:13px;color:var(--coklat)}
+.cart-nama-text{font-size:11px;font-weight:500;color:var(--text)}
+.cart-items-list{max-height:90px;overflow-y:auto;padding:0 12px 4px}
+.cart-items-list::-webkit-scrollbar{display:none}
+.cart-line{display:flex;justify-content:space-between;padding:3px 0;border-bottom:0.5px solid var(--cream)}
+.cart-line-name{font-size:10px;color:var(--text)}
+.cart-line-qty{font-size:10px;color:var(--muted)}
+.cart-line-price{font-size:10px;font-weight:500;color:var(--coklat)}
+.cart-total-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 12px}
+.cart-total-lbl{font-size:11px;color:var(--muted)}
+.cart-total-val{font-size:16px;font-weight:700;color:var(--text)}
+.pay-btns{display:flex;gap:7px;padding:0 12px 10px}
+.pay-btns .btn{flex:1;padding:11px}
+
+/* ── MODALS ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:16px 14px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto}
+.modal::-webkit-scrollbar{display:none}
+.modal-handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 14px}
+.modal-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;text-align:center}
+.modal-close{float:right;background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;margin-top:-4px}
+
+/* Payment modal */
+.pay-total-big{text-align:center;margin-bottom:14px}
+.pay-total-lbl{font-size:11px;color:var(--muted);margin-bottom:3px}
+.pay-total-val{font-size:28px;font-weight:700;color:var(--text)}
+.denom-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.denom-btn{background:#fff;border:0.5px solid var(--border);border-radius:var(--rs);padding:9px;font-size:11px;color:var(--coklat);cursor:pointer;text-align:center;font-weight:500}
+.denom-btn:active{background:var(--cream)}
+.kembalian-box{background:var(--green-bg);border-radius:var(--rs);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.kem-lbl{font-size:12px;color:var(--green)}
+.kem-val{font-size:15px;font-weight:700;color:var(--green)}
+
+/* QRIS */
+.qris-box{background:#fff;border-radius:var(--r);padding:16px;text-align:center;margin-bottom:12px;border:0.5px solid var(--border)}
+.qris-icon{font-size:64px;color:var(--coklat);margin-bottom:8px}
+.qris-amount{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.qris-note{font-size:10px;color:var(--muted)}
+
+/* Struk */
+.struk-paper{background:#fff;border-radius:var(--r);padding:16px;border:0.5px solid var(--border);margin-bottom:12px}
+.struk-head{text-align:center;margin-bottom:10px}
+.struk-bisnis{font-size:15px;font-weight:700;color:var(--coklat2)}
+.struk-sub{font-size:10px;color:var(--muted)}
+.struk-divider{border:none;border-top:1px dashed var(--border);margin:8px 0}
+.struk-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text);padding:2px 0}
+.struk-row.bold{font-weight:700;font-size:12px}
+.struk-row.muted{color:var(--muted)}
+.struk-footer{text-align:center;font-size:10px;color:var(--muted);margin-top:8px}
+
+/* ── STOK ── */
+.filter-bar{display:flex;gap:6px;padding:10px 12px 6px}
+.filter-pill{flex:1;background:#fff;border:0.5px solid var(--border);border-radius:7px;padding:6px;font-size:10px;color:var(--coklat);text-align:center;cursor:pointer}
+.filter-pill.active{background:var(--coklat);color:#fff;border-color:var(--coklat)}
+.stok-card{background:#fff;border-radius:var(--rs);padding:11px 13px;margin:0 12px 7px;border:0.5px solid var(--border)}
+.stok-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.stok-name{font-size:12px;font-weight:600;color:var(--text)}
+.stok-type{font-size:10px;color:var(--muted);margin-top:1px}
+.stok-kg{font-size:16px;font-weight:700;color:var(--text)}
+.stok-unit{font-size:9px;color:var(--muted)}
+.stok-bar-bg{background:var(--cream);border-radius:4px;height:6px;margin-top:6px}
+.stok-bar-fill{height:6px;border-radius:4px;transition:width 0.3s}
+.stok-meta{display:flex;justify-content:space-between;margin-top:3px}
+.stok-meta span{font-size:9px;color:var(--muted)}
+.stok-actions{display:flex;gap:6px;margin-top:8px}
+.stok-actions .btn{flex:1;padding:7px;font-size:10px}
+
+/* ── FERMENTASI ── */
+.batch-card{background:#fff;border-radius:var(--rs);padding:11px 13px;margin:0 12px 7px;border:0.5px solid var(--border)}
+.batch-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.batch-name{font-size:12px;font-weight:600;color:var(--text)}
+.batch-proses{font-size:10px;color:var(--muted);margin-top:1px}
+.batch-detail{font-size:10px;color:#6b4a35;margin-bottom:3px}
+.batch-timer{display:flex;align-items:center;gap:5px;margin-top:5px}
+.batch-timer i{font-size:14px;color:var(--amber)}
+.batch-timer span{font-size:11px;font-weight:500;color:var(--amber)}
+.batch-actions{display:flex;gap:6px;margin-top:8px}
+.batch-actions .btn{flex:1;padding:7px;font-size:10px}
+
+/* ── KAS ── */
+.kas-total-card{margin:10px 12px 8px;background:var(--coklat);border-radius:var(--r);padding:16px}
+.kas-saldo-lbl{font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px}
+.kas-saldo-val{font-size:26px;font-weight:700;color:#fff}
+.kas-mini-row{display:flex;gap:8px;margin-top:12px}
+.kas-mini{flex:1;background:rgba(255,255,255,0.12);border-radius:8px;padding:9px}
+.kas-mini-lbl{font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:2px}
+.kas-mini-val{font-size:14px;font-weight:600}
+.kas-entry{background:#fff;border-radius:var(--rs);padding:10px 12px;margin:0 12px 6px;border:0.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.kas-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kas-icon.in{background:var(--green-bg)}
+.kas-icon.out{background:var(--red-bg)}
+.kas-icon i{font-size:17px}
+.kas-icon.in i{color:var(--green)}
+.kas-icon.out i{color:var(--red)}
+.kas-info{flex:1}
+.kas-ket{font-size:11px;font-weight:500;color:var(--text)}
+.kas-cat{font-size:9px;color:var(--muted);margin-top:1px}
+.kas-amt{font-size:13px;font-weight:600;text-align:right}
+.kas-amt.in{color:var(--green)}
+.kas-amt.out{color:var(--red)}
+.kas-fab{display:flex;gap:7px;padding:8px 12px;background:#fff;border-top:0.5px solid var(--border)}
+
+/* ── LAPORAN ── */
+.lap-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px 4px}
+.lap-card{background:#fff;border-radius:var(--rs);padding:11px 13px;border:0.5px solid var(--border)}
+.lap-lbl{font-size:10px;color:var(--muted);margin-bottom:3px}
+.lap-val{font-size:16px;font-weight:700;color:var(--text)}
+.lap-sub{font-size:9px;color:var(--green);margin-top:2px}
+.date-filter{display:flex;gap:6px;padding:8px 12px;align-items:center}
+.date-filter label{font-size:10px;color:var(--muted);white-space:nowrap}
+.date-filter input{flex:1;background:#fff;border:0.5px solid var(--border);border-radius:var(--rs);padding:6px 8px;font-size:11px;color:var(--text);outline:none}
+.menu-rank-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--cream)}
+.rank-name{font-size:11px;color:var(--text)}
+.rank-qty{font-size:10px;color:var(--muted)}
+.rank-total{font-size:11px;font-weight:600;color:var(--coklat)}
+
+/* ── SETTING ── */
+.setting-section{padding:10px 12px 4px}
+.setting-item{background:#fff;border-radius:var(--rs);padding:11px 13px;margin-bottom:6px;border:0.5px solid var(--border)}
+.setting-lbl{font-size:10px;color:var(--muted);margin-bottom:4px}
+.setting-val{font-size:12px;color:var(--text)}
+.toggle{width:42px;height:24px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;border:none;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left 0.2s}
+.toggle.on::after{left:21px}
+.setting-row{display:flex;justify-content:space-between;align-items:center}
+
+/* ── LOGIN ── */
+.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;background:var(--coklat);padding:24px}
+.login-logo{width:80px;height:80px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:36px;color:var(--coklat);margin-bottom:12px}
+.login-title{color:#fff;font-size:22px;font-weight:700;margin-bottom:4px}
+.login-sub{color:#c8956b;font-size:12px;margin-bottom:32px}
+.login-card{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:360px}
+.login-card h3{font-size:14px;color:var(--coklat);margin-bottom:16px;text-align:center}
+.login-error{background:var(--red-bg);color:var(--red);border-radius:var(--rs);padding:8px 12px;font-size:11px;margin-bottom:12px;display:none}
+.login-hint{font-size:10px;color:var(--muted);text-align:center;margin-top:12px}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);font-size:12px;gap:8px}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--coklat);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* ── FAB ── */
+.fab-btn{position:fixed;bottom:80px;right:16px;width:48px;height:48px;border-radius:50%;background:var(--coklat);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50;box-shadow:0 2px 8px rgba(92,45,10,0.3)}
+
+/* Roasting steps */
+.step-flow{display:flex;align-items:center;padding:12px 12px 6px}
+.step-node{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.step-node.done{background:var(--coklat);color:#fff}
+.step-node.active-step{background:var(--amber);color:#fff}
+.step-node.todo{background:var(--cream);color:var(--muted);border:0.5px solid var(--border)}
+.step-line{flex:1;height:2px;background:var(--border)}
+.step-line.done{background:var(--coklat)}
+.step-labels{display:flex;justify-content:space-between;padding:0 14px 10px}
+.step-labels span{font-size:9px;color:var(--muted);text-align:center;width:32px}
+.step-labels span.active-label{color:var(--amber);font-weight:600}
+.step-labels span.done-label{color:var(--coklat)}
+
+@media(min-width:480px){
+  .app{box-shadow:0 0 24px rgba(0,0,0,0.12)}
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- LOGIN -->
+<div id="login-page" class="login-page" style="display:none">
+  <div class="login-logo">B</div>
+  <div class="login-title">Bajang Coffee</div>
+  <div class="login-sub">Roasting & Café Management</div>
+  <div class="login-card">
+    <h3>Masuk ke Aplikasi</h3>
+    <div id="login-error" class="login-error"></div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" id="login-user" type="text" placeholder="admin / kasir / roaster" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="login-pass" type="password" placeholder="Password" autocomplete="off">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()">
+      <i class="ti ti-login"></i> Masuk
+    </button>
+    <div class="login-hint">Default password: <b>password</b></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app" style="display:none">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="logo-row">
+        <div class="logo-circle">B</div>
+        <div>
+          <div class="app-title">Bajang Coffee</div>
+          <div class="app-sub" id="topbar-sub">Roasting & Café</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="notif-btn" id="notif-btn" onclick="showNotif()" style="display:none">
+          <span class="ndot"></span>
+          <span id="notif-count">0</span>
+          <i class="ti ti-bell"></i>
+        </button>
+        <button class="notif-btn" onclick="doLogout()">
+          <i class="ti ti-logout"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-area" id="content-area">
+    <!-- Content rendered by JS -->
+  </div>
+
+  <nav class="bottomnav" id="bottomnav">
+    <button class="nav-item active" data-page="home" onclick="goPage('home')">
+      <i class="ti ti-home"></i><span>Home</span>
+    </button>
+    <button class="nav-item" data-page="pos" onclick="goPage('pos')">
+      <i class="ti ti-receipt"></i><span>Kasir</span>
+    </button>
+    <button class="nav-item" data-page="stok" onclick="goPage('stok')">
+      <i class="ti ti-package"></i><span>Stok</span>
+    </button>
+    <button class="nav-item" data-page="roasting" onclick="goPage('roasting')">
+      <i class="ti ti-flame"></i><span>Roasting</span>
+    </button>
+    <button class="nav-item" data-page="laporan" onclick="goPage('laporan')">
+      <i class="ti ti-chart-bar"></i><span>Laporan</span>
+    </button>
+    <button class="nav-item" data-page="setting" onclick="goPage('setting')">
+      <i class="ti ti-settings"></i><span>Setting</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="modal-bayar">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('modal-bayar')"><i class="ti ti-x"></i></button>
+    <div class="modal-title" id="modal-bayar-title">Pembayaran Tunai</div>
+    <div class="pay-total-big">
+      <div class="pay-total-lbl">Total Tagihan</div>
+      <div class="pay-total-val" id="modal-total">Rp 0</div>
+    </div>
+    <div id="tunai-section">
+      <div class="form-label">Nominal cepat</div>
+      <div class="denom-grid" id="denom-grid"></div>
+      <div class="form-group">
+        <label class="form-label">Uang diterima</label>
+        <input class="form-input" type="number" id="bayar-input" placeholder="0" oninput="hitungKem()">
+      </div>
+      <div class="kembalian-box" id="kem-box" style="display:none">
+        <span class="kem-lbl">Kembalian</span>
+        <span class="kem-val" id="kem-val">Rp 0</span>
+      </div>
+    </div>
+    <div id="qris-section" style="display:none">
+      <div class="qris-box">
+        <div class="qris-icon"><i class="ti ti-qrcode"></i></div>
+        <div class="qris-amount" id="qris-amount">Rp 0</div>
+        <div class="qris-note" id="qris-bank">Bank BCA · a/n Bajang Coffee</div>
+        <div class="qris-note" style="margin-top:4px">Scan QR atau transfer ke rekening</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" id="btn-konfirmasi" onclick="konfirmasiBayar()">
+      <i class="ti ti-check"></i> Konfirmasi Bayar
+    </button>
+  </div>
+</div>
+
+<div class="overlay" id="modal-struk">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="struk-paper">
+      <div class="struk-head">
+        <div class="struk-bisnis" id="struk-bisnis">Bajang Coffee</div>
+        <div class="struk-sub" id="struk-alamat">Lombok, NTB</div>
+      </div>
+      <hr class="struk-divider">
+      <div class="struk-row muted"><span id="struk-tgl"></span><span id="struk-no"></span></div>
+      <div class="struk-row muted" style="margin-bottom:4px"><span>Pelanggan</span><span id="struk-nama"></span></div>
+      <hr class="struk-divider">
+      <div id="struk-items"></div>
+      <hr class="struk-divider">
+      <div class="struk-row bold"><span>Total</span><span id="struk-total"></span></div>
+      <div class="struk-row"><span>Bayar</span><span id="struk-bayar"></span></div>
+      <div class="struk-row" id="struk-kem-row"><span>Kembalian</span><span id="struk-kem"></span></div>
+      <div class="struk-row"><span>Metode</span><span id="struk-metode"></span></div>
+      <hr class="struk-divider">
+      <div class="struk-footer" id="struk-footer">Terima kasih sudah berkunjung!<br>IG: @bajang.coffee</div>
+    </div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-secondary" style="flex:1" onclick="printStruk()"><i class="ti ti-printer"></i> Print</button>
+      <button class="btn btn-primary" style="flex:1" onclick="selesaiBayar()"><i class="ti ti-check"></i> Selesai</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('modal-form')"><i class="ti ti-x"></i></button>
+    <div class="modal-title" id="modal-form-title">Form</div>
+    <div id="modal-form-body"></div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-notif">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('modal-notif')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Notifikasi & Alert</div>
+    <div id="modal-notif-body"></div>
+  </div>
+</div>
+
+<script>
+const API = '';
+let TOKEN = localStorage.getItem('bc_token');
+let USER = JSON.parse(localStorage.getItem('bc_user') || 'null');
+let currentPage = 'home';
+let cart = {};
+let currentNama = '';
+let currentMetode = '';
+let orderNum = 1;
+let currentCat = 'minuman';
+let dashData = {};
+let editingId = null;
+
+// ── API HELPER ──
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + '/api' + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error');
+  return data;
+}
+
+function fmt(n) { return 'Rp ' + Math.round(n || 0).toLocaleString('id-ID'); }
+function toast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+
+// ── AUTH ──
+async function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  try {
+    const data = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    }).then(r => r.json());
+    if (!data.token) throw new Error(data.error || 'Login gagal');
+    TOKEN = data.token;
+    USER = data.user;
+    localStorage.setItem('bc_token', TOKEN);
+    localStorage.setItem('bc_user', JSON.stringify(USER));
+    err.style.display = 'none';
+    startApp();
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = 'block';
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-page').style.display !== 'none') doLogin();
+});
+
+function doLogout() {
+  localStorage.removeItem('bc_token');
+  localStorage.removeItem('bc_user');
+  TOKEN = null; USER = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+}
+
+function startApp() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  goPage('home');
+}
+
+// ── NAVIGATION ──
+function goPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  const titles = { home: 'Dashboard', pos: 'Kasir POS', stok: 'Manajemen Stok', roasting: 'Roasting & Fermentasi', laporan: 'Laporan', setting: 'Pengaturan' };
+  document.getElementById('topbar-sub').textContent = titles[page] || 'Bajang Coffee';
+  const pages = { home: renderHome, pos: renderPOS, stok: renderStok, roasting: renderRoasting, laporan: renderLaporan, setting: renderSetting };
+  if (pages[page]) pages[page]();
+}
+
+// ─── HOME ───────────────────────────────────────────────────────────────────
+async function renderHome() {
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat dashboard...</div>';
+  try {
+    dashData = await api('GET', '/laporan/dashboard');
+    const alerts = dashData.fermentasi_alert || [];
+    const notifBtn = document.getElementById('notif-btn');
+    if (alerts.length > 0) {
+      notifBtn.style.display = 'flex';
+      document.getElementById('notif-count').textContent = alerts.length;
+    } else {
+      notifBtn.style.display = 'none';
+    }
+
+    ca.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-lbl">Penjualan Hari Ini</div>
+        <div class="stat-val">${fmt(dashData.penjualan_hari_ini)}</div>
+        <div class="stat-sub ok">Profit ${fmt(dashData.profit_hari_ini)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Order Masuk</div>
+        <div class="stat-val">${dashData.order_count}</div>
+        <div class="stat-sub">Hari ini</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Kas Masuk</div>
+        <div class="stat-val" style="font-size:15px">${fmt(dashData.kas_masuk)}</div>
+        <div class="stat-sub">Hari ini</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Saldo Kas</div>
+        <div class="stat-val" style="font-size:15px">${fmt(dashData.saldo_kas)}</div>
+        <div class="stat-sub ok">Total akumulasi</div>
+      </div>
+    </div>
+    ${alerts.length > 0 ? `
+    <div class="alert-strip">
+      <div class="alert-strip-title"><i class="ti ti-bell-ringing"></i> Reminder Fermentasi</div>
+      ${alerts.map(f => `
+        <div class="alert-row">
+          <span class="alert-name">${f.nama_batch} — ${f.jenis_proses}</span>
+          <span class="badge ${f.sisa_hari <= 0 ? 'badge-red' : f.sisa_hari <= 1 ? 'badge-red' : 'badge-amber'}">
+            ${f.sisa_hari <= 0 ? 'Terlambat!' : f.sisa_hari === 1 ? 'Hari ini' : f.sisa_hari + ' hari lagi'}
+          </span>
+        </div>`).join('')}
+    </div>` : ''}
+    ${(dashData.stok_kritis || []).length > 0 ? `
+    <div class="alert-strip" style="border-color:var(--red);background:var(--red-bg)">
+      <div class="alert-strip-title" style="color:var(--coklat)"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> Stok Kritis</div>
+      ${dashData.stok_kritis.map(s => `
+        <div class="alert-row">
+          <span class="alert-name">${s.nama}</span>
+          <span class="badge badge-red">${s.stok_kg} kg</span>
+        </div>`).join('')}
+    </div>` : ''}
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Order Terbaru</div>
+        <button class="section-link" onclick="goPage('laporan')">Lihat semua</button>
+      </div>
+    </div>
+    ${(dashData.order_terbaru || []).length === 0 ? '<div class="loading">Belum ada order hari ini</div>' :
+      dashData.order_terbaru.map(o => `
+      <div class="order-item">
+        <div>
+          <div class="order-name">${o.nama_pelanggan}</div>
+          <div class="order-detail">${o.no_order} · ${o.metode_bayar} · ${o.waktu}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="order-price">${fmt(o.total)}</div>
+          <span class="badge badge-green">Selesai</span>
+        </div>
+      </div>`).join('')}
+    <div style="padding:8px 12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn btn-primary" onclick="goPage('pos')"><i class="ti ti-receipt"></i> Buka Kasir</button>
+        <button class="btn btn-secondary" onclick="goPage('kas')"><i class="ti ti-wallet"></i> Input Kas</button>
+      </div>
+    </div>`;
+  } catch (e) {
+    ca.innerHTML = `<div class="loading">Gagal memuat: ${e.message}</div>`;
+  }
+}
+
+// ─── POS ────────────────────────────────────────────────────────────────────
+let menuData = {};
+
+async function renderPOS() {
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat menu...</div>';
+  try {
+    const menu = await api('GET', '/menu');
+    menuData = {};
+    menu.forEach(m => {
+      if (!menuData[m.kategori]) menuData[m.kategori] = [];
+      menuData[m.kategori].push(m);
+    });
+    cart = {}; currentNama = ''; currentCat = 'minuman';
+    renderPOSLayout();
+  } catch (e) {
+    ca.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
+  }
+}
+
+function renderPOSLayout() {
+  const ca = document.getElementById('content-area');
+  const cats = Object.keys(menuData);
+  ca.innerHTML = `
+    <div class="pos-nama-bar">
+      <input type="text" id="pos-nama" placeholder="Nama pelanggan..." value="${currentNama}" oninput="currentNama=this.value">
+      <button class="btn btn-primary" style="padding:8px 12px" onclick="currentNama=document.getElementById('pos-nama').value;toast('Nama: '+currentNama)">
+        <i class="ti ti-user-check"></i>
+      </button>
+    </div>
+    <div class="cat-bar">
+      ${cats.map(c => `<div class="cat-pill ${c===currentCat?'active':''}" onclick="currentCat='${c}';renderMenuGrid()">${catLabel(c)}</div>`).join('')}
+    </div>
+    <div id="menu-grid" class="menu-grid"></div>
+    <div id="cart-panel" class="cart-panel" style="display:none">
+      <div class="cart-header">
+        <div class="cart-nama"><i class="ti ti-user"></i><span class="cart-nama-text" id="cart-nama-display">${currentNama||'Umum'}</span></div>
+        <button class="btn btn-secondary" style="padding:4px 10px;font-size:10px" onclick="clearCart()">Batal</button>
+      </div>
+      <div class="cart-items-list" id="cart-items-list"></div>
+      <div class="cart-total-bar">
+        <div><div class="cart-total-lbl">Total</div><div class="cart-total-val" id="cart-total-display">Rp 0</div></div>
+        <div style="font-size:10px;color:var(--muted)">HPP: <span id="cart-hpp-display">Rp 0</span></div>
+      </div>
+      <div class="pay-btns">
+        <button class="btn btn-primary" onclick="openBayar('Tunai')"><i class="ti ti-cash"></i> Tunai</button>
+        <button class="btn btn-blue" onclick="openBayar('QRIS')"><i class="ti ti-qrcode"></i> QRIS</button>
+      </div>
+    </div>`;
+  renderMenuGrid();
+}
+
+function catLabel(c) {
+  return {minuman:'Minuman',beans:'Beans',bubuk:'Kopi Bubuk',snack:'Snack'}[c] || c;
+}
+
+function renderMenuGrid() {
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.classList.toggle('active', p.textContent === catLabel(currentCat));
+  });
+  const grid = document.getElementById('menu-grid');
+  if (!grid) return;
+  const items = menuData[currentCat] || [];
+  grid.innerHTML = items.map(m => {
+    const qty = cart[m.id] ? cart[m.id].qty : 0;
+    return `<div class="menu-card ${qty>0?'selected':''}" id="mc-${m.id}">
+      <div class="menu-card-top">
+        <div class="menu-icon"><i class="ti ti-coffee"></i></div>
+        <div>
+          <div class="menu-name">${m.nama}</div>
+          <div class="menu-price">${fmt(m.harga)}</div>
+          <div class="menu-hpp">HPP ${fmt(m.hpp)}</div>
+        </div>
+      </div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="chgQty('${m.id}','${m.nama}',${m.harga},${m.hpp},-1)">−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="chgQty('${m.id}','${m.nama}',${m.harga},${m.hpp},1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function chgQty(id, nama, harga, hpp, delta) {
+  if (!cart[id]) cart[id] = { nama, harga, hpp, qty: 0 };
+  cart[id].qty = Math.max(0, cart[id].qty + delta);
+  if (cart[id].qty === 0) delete cart[id];
+  renderMenuGrid();
+  updateCart();
+}
+
+function updateCart() {
+  const keys = Object.keys(cart);
+  const total = keys.reduce((s, k) => s + cart[k].harga * cart[k].qty, 0);
+  const hpp = keys.reduce((s, k) => s + cart[k].hpp * cart[k].qty, 0);
+  const panel = document.getElementById('cart-panel');
+  if (!panel) return;
+  if (keys.length === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  document.getElementById('cart-nama-display').textContent = currentNama || 'Umum';
+  document.getElementById('cart-items-list').innerHTML = keys.map(k =>
+    `<div class="cart-line">
+      <span class="cart-line-name">${cart[k].nama}</span>
+      <span class="cart-line-qty">x${cart[k].qty}</span>
+      <span class="cart-line-price">${fmt(cart[k].harga * cart[k].qty)}</span>
+    </div>`).join('');
+  document.getElementById('cart-total-display').textContent = fmt(total);
+  document.getElementById('cart-hpp-display').textContent = fmt(hpp);
+}
+
+function clearCart() { cart = {}; updateCart(); renderMenuGrid(); }
+
+async function openBayar(metode) {
+  const keys = Object.keys(cart);
+  if (!keys.length) { toast('Pilih item dulu'); return; }
+  currentMetode = metode;
+  const total = keys.reduce((s, k) => s + cart[k].harga * cart[k].qty, 0);
+  document.getElementById('modal-bayar-title').textContent = 'Pembayaran ' + metode;
+  document.getElementById('modal-total').textContent = fmt(total);
+
+  if (metode === 'Tunai') {
+    document.getElementById('tunai-section').style.display = 'block';
+    document.getElementById('qris-section').style.display = 'none';
+    document.getElementById('bayar-input').value = '';
+    document.getElementById('kem-box').style.display = 'none';
+    const denoms = [5000, 10000, 20000, 50000, 100000];
+    document.getElementById('denom-grid').innerHTML = denoms.map(d => {
+      const nom = Math.ceil(total / d) * d;
+      return `<button class="denom-btn" onclick="setDenom(${nom})">${fmt(nom)}</button>`;
+    }).join('');
+  } else {
+    document.getElementById('tunai-section').style.display = 'none';
+    document.getElementById('qris-section').style.display = 'block';
+    document.getElementById('qris-amount').textContent = fmt(total);
+    try {
+      const cfg = await api('GET', '/config');
+      document.getElementById('qris-bank').textContent = `${cfg.bank_name || 'BCA'} · ${cfg.bank_no || ''} · a/n ${cfg.bank_an || 'Bajang Coffee'}`;
+    } catch {}
+  }
+  openModal('modal-bayar');
+}
+
+function setDenom(v) {
+  document.getElementById('bayar-input').value = v;
+  hitungKem();
+}
+
+function hitungKem() {
+  const keys = Object.keys(cart);
+  const total = keys.reduce((s, k) => s + cart[k].harga * cart[k].qty, 0);
+  const bayar = parseInt(document.getElementById('bayar-input').value) || 0;
+  const kem = bayar - total;
+  const box = document.getElementById('kem-box');
+  if (bayar >= total) {
+    box.style.display = 'flex';
+    document.getElementById('kem-val').textContent = fmt(kem);
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+async function konfirmasiBayar() {
+  const keys = Object.keys(cart);
+  if (!keys.length) return;
+  const total = keys.reduce((s, k) => s + cart[k].harga * cart[k].qty, 0);
+  const hpp = keys.reduce((s, k) => s + cart[k].hpp * cart[k].qty, 0);
+
+  if (currentMetode === 'Tunai') {
+    const bayar = parseInt(document.getElementById('bayar-input').value) || 0;
+    if (bayar < total) { toast('Uang kurang'); return; }
+  }
+
+  const items = keys.map(k => ({ id: k, nama: cart[k].nama, harga: cart[k].harga, hpp: cart[k].hpp, qty: cart[k].qty }));
+  const bayar = currentMetode === 'Tunai' ? parseInt(document.getElementById('bayar-input').value) : total;
+  const kembalian = currentMetode === 'Tunai' ? bayar - total : 0;
+
+  try {
+    const res = await api('POST', '/orders', {
+      nama_pelanggan: currentNama || 'Umum',
+      items,
+      metode_bayar: currentMetode,
+      bayar,
+      kembalian
+    });
+    closeModal('modal-bayar');
+    tampilStruk(res.order, bayar, kembalian);
+  } catch (e) {
+    toast('Gagal: ' + e.message);
+  }
+}
+
+async function tampilStruk(order, bayar, kembalian) {
+  try {
+    const cfg = await api('GET', '/config');
+    document.getElementById('struk-bisnis').textContent = cfg.nama_bisnis || 'Bajang Coffee';
+    document.getElementById('struk-alamat').textContent = cfg.alamat || '';
+    document.getElementById('struk-footer').innerHTML = `Terima kasih sudah berkunjung!<br>${cfg.instagram ? 'IG: ' + cfg.instagram : ''}`;
+  } catch {}
+  const now = new Date();
+  document.getElementById('struk-tgl').textContent = now.toLocaleDateString('id-ID');
+  document.getElementById('struk-no').textContent = order.no_order;
+  document.getElementById('struk-nama').textContent = order.nama_pelanggan;
+  document.getElementById('struk-total').textContent = fmt(order.total);
+  document.getElementById('struk-bayar').textContent = fmt(bayar);
+  document.getElementById('struk-metode').textContent = order.metode_bayar;
+  const kemRow = document.getElementById('struk-kem-row');
+  if (order.metode_bayar === 'Tunai') {
+    kemRow.style.display = 'flex';
+    document.getElementById('struk-kem').textContent = fmt(kembalian);
+  } else {
+    kemRow.style.display = 'none';
+  }
+  document.getElementById('struk-items').innerHTML = order.items.map(i =>
+    `<div class="struk-row"><span>${i.nama} x${i.qty}</span><span>${fmt(i.harga * i.qty)}</span></div>`
+  ).join('');
+  openModal('modal-struk');
+}
+
+function printStruk() {
+  toast('Print ke thermal printer...');
+  window.print();
+}
+
+function selesaiBayar() {
+  closeModal('modal-struk');
+  clearCart();
+  toast('Transaksi selesai!');
+}
+
+// ─── STOK ───────────────────────────────────────────────────────────────────
+let stokFilter = 'semua';
+
+async function renderStok() {
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat stok...</div>';
+  try {
+    const stok = await api('GET', '/stok');
+    const filtered = stokFilter === 'semua' ? stok : stok.filter(s => s.tipe === stokFilter);
+    const tipes = ['semua', 'green_bean', 'roasted', 'bubuk'];
+    const tipeLabel = { semua: 'Semua', green_bean: 'Green Bean', roasted: 'Roasted', bubuk: 'Bubuk' };
+    ca.innerHTML = `
+      <div class="filter-bar">
+        ${tipes.map(t => `<div class="filter-pill ${stokFilter===t?'active':''}" onclick="stokFilter='${t}';renderStok()">${tipeLabel[t]}</div>`).join('')}
+      </div>
+      ${filtered.map(s => {
+        const pct = Math.min(100, Math.round((s.stok_kg / (s.stok_min * 5)) * 100));
+        const color = s.stok_kg <= s.stok_min ? '#c0392b' : s.stok_kg <= s.stok_min * 1.5 ? '#e07b2a' : '#5C2D0A';
+        const status = s.stok_kg <= s.stok_min ? '⚠ Kritis' : s.stok_kg <= s.stok_min * 1.5 ? '⚠ Hampir habis' : '✓ Aman';
+        const statusColor = s.stok_kg <= s.stok_min ? 'var(--red)' : s.stok_kg <= s.stok_min * 1.5 ? 'var(--amber)' : 'var(--green)';
+        return `<div class="stok-card">
+          <div class="stok-top">
+            <div>
+              <div class="stok-name">${s.nama}</div>
+              <div class="stok-type">${{green_bean:'Green Bean',roasted:'Roasted',bubuk:'Bubuk'}[s.tipe]||s.tipe} · ${s.grade||''}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="stok-kg">${s.stok_kg}</div>
+              <div class="stok-unit">kg</div>
+            </div>
+          </div>
+          <div class="stok-bar-bg"><div class="stok-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <div class="stok-meta"><span>Min: ${s.stok_min} kg</span><span style="color:${statusColor}">${status}</span></div>
+          <div class="stok-meta" style="margin-top:3px"><span>HPP: ${fmt(s.harga_beli)}/kg</span><span>Nilai: ${fmt(s.harga_beli * s.stok_kg)}</span></div>
+          <div class="stok-actions">
+            <button class="btn btn-secondary" onclick="formTambahStok('${s.id}')"><i class="ti ti-plus"></i> Tambah</button>
+            <button class="btn btn-secondary" onclick="formEditStok('${s.id}',${JSON.stringify(s).replace(/"/g,'&quot;')})"><i class="ti ti-edit"></i> Edit</button>
+            <button class="btn btn-red" onclick="hapusStok('${s.id}','${s.nama}')"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="padding:8px 12px 16px">
+        <button class="btn btn-primary btn-full" onclick="formTambahStokBaru()"><i class="ti ti-plus"></i> Tambah Stok Baru</button>
+      </div>`;
+  } catch (e) {
+    ca.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
+  }
+}
+
+function formTambahStokBaru() {
+  editingId = null;
+  document.getElementById('modal-form-title').textContent = 'Tambah Stok Baru';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Nama Kopi</label><input class="form-input" id="f-nama" placeholder="Flores Bajawa..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tipe</label>
+        <select class="form-select" id="f-tipe">
+          <option value="green_bean">Green Bean</option>
+          <option value="roasted">Roasted</option>
+          <option value="bubuk">Bubuk</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Grade</label><input class="form-input" id="f-grade" placeholder="Grade 1"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Stok (kg)</label><input class="form-input" id="f-stok" type="number" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Min Stok (kg)</label><input class="form-input" id="f-min" type="number" placeholder="5"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Harga Beli / kg</label><input class="form-input" id="f-hbeli" type="number" placeholder="80000"></div>
+    <button class="btn btn-primary btn-full" onclick="simpanStok()"><i class="ti ti-check"></i> Simpan</button>`;
+  openModal('modal-form');
+}
+
+async function simpanStok() {
+  const data = {
+    nama: document.getElementById('f-nama').value,
+    tipe: document.getElementById('f-tipe').value,
+    grade: document.getElementById('f-grade').value,
+    stok_kg: parseFloat(document.getElementById('f-stok').value) || 0,
+    stok_min: parseFloat(document.getElementById('f-min').value) || 5,
+    harga_beli: parseInt(document.getElementById('f-hbeli').value) || 0,
+    satuan: 'kg'
+  };
+  try {
+    if (editingId) await api('PUT', '/stok/' + editingId, data);
+    else await api('POST', '/stok', data);
+    closeModal('modal-form');
+    toast('Stok tersimpan!');
+    renderStok();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+function formTambahStok(id) {
+  document.getElementById('modal-form-title').textContent = 'Tambah Stok';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Tambah Stok (kg)</label><input class="form-input" id="f-tambah" type="number" placeholder="0" min="0"></div>
+    <button class="btn btn-primary btn-full" onclick="prosessTambahStok('${id}')"><i class="ti ti-plus"></i> Tambah</button>`;
+  openModal('modal-form');
+}
+
+async function prosessTambahStok(id) {
+  const tambah = parseFloat(document.getElementById('f-tambah').value) || 0;
+  if (!tambah) { toast('Masukkan jumlah'); return; }
+  try {
+    const stok = await api('GET', '/stok');
+    const item = stok.find(s => s.id === id);
+    await api('PUT', '/stok/' + id, { stok_kg: item.stok_kg + tambah });
+    closeModal('modal-form');
+    toast('Stok ditambah!');
+    renderStok();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+function formEditStok(id, data) {
+  editingId = id;
+  document.getElementById('modal-form-title').textContent = 'Edit Stok';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Nama</label><input class="form-input" id="f-nama" value="${data.nama}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Stok (kg)</label><input class="form-input" id="f-stok" type="number" value="${data.stok_kg}"></div>
+      <div class="form-group"><label class="form-label">Min (kg)</label><input class="form-input" id="f-min" type="number" value="${data.stok_min}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Harga Beli / kg</label><input class="form-input" id="f-hbeli" type="number" value="${data.harga_beli}">
+    </div>
+    <div class="form-group"><label class="form-label">Grade</label><input class="form-input" id="f-grade" value="${data.grade||''}"></div>
+    <select class="form-select" id="f-tipe" style="margin-bottom:12px">
+      <option value="green_bean" ${data.tipe==='green_bean'?'selected':''}>Green Bean</option>
+      <option value="roasted" ${data.tipe==='roasted'?'selected':''}>Roasted</option>
+      <option value="bubuk" ${data.tipe==='bubuk'?'selected':''}>Bubuk</option>
+    </select>
+    <button class="btn btn-primary btn-full" onclick="simpanStok()"><i class="ti ti-check"></i> Simpan</button>`;
+  openModal('modal-form');
+}
+
+async function hapusStok(id, nama) {
+  if (!confirm('Hapus stok ' + nama + '?')) return;
+  try {
+    await api('DELETE', '/stok/' + id);
+    toast('Stok dihapus');
+    renderStok();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+// ─── ROASTING ───────────────────────────────────────────────────────────────
+async function renderRoasting() {
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat data...</div>';
+  try {
+    const list = await api('GET', '/fermentasi');
+    ca.innerHTML = `
+      <div class="step-flow">
+        <div class="step-node done-label done">1</div>
+        <div class="step-line done"></div>
+        <div class="step-node done">2</div>
+        <div class="step-line done"></div>
+        <div class="step-node active-step">3</div>
+        <div class="step-line"></div>
+        <div class="step-node todo">4</div>
+        <div class="step-line"></div>
+        <div class="step-node todo">5</div>
+      </div>
+      <div class="step-labels">
+        <span class="done-label">Beli</span><span class="done-label">Sortir</span>
+        <span class="active-label">Ferment</span><span>Roast</span><span>Jual</span>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Batch Fermentasi Aktif</div>
+          <button class="section-link" onclick="formBatchBaru()">+ Batch Baru</button>
+        </div>
+      </div>
+      ${list.length === 0 ? '<div class="loading">Belum ada batch aktif</div>' :
+        list.map(f => {
+          const isDone = f.status === 'selesai';
+          const alertClass = isDone ? 'badge-green' : f.alert === 'overdue' ? 'badge-red' : f.alert === 'hari_ini' ? 'badge-red' : f.alert === 'segera' ? 'badge-amber' : 'badge-blue';
+          const alertTxt = isDone ? 'Selesai' : f.sisa_hari <= 0 ? 'Terlambat!' : f.sisa_hari === 1 ? 'Hari ini' : f.sisa_hari + ' hari lagi';
+          return `<div class="batch-card">
+            <div class="batch-top">
+              <div>
+                <div class="batch-name">${f.nama_batch}</div>
+                <div class="batch-proses">${f.jenis_proses} · ${f.berat_kg} kg</div>
+              </div>
+              <span class="badge ${alertClass}">${alertTxt}</span>
+            </div>
+            <div class="batch-detail">Mulai: ${f.tgl_mulai} → Target: ${f.tgl_target}</div>
+            ${f.catatan ? `<div class="batch-detail" style="color:var(--muted)">${f.catatan}</div>` : ''}
+            <div class="batch-actions">
+              ${!isDone ? `<button class="btn btn-green" onclick="selesaikanBatch('${f.id}')"><i class="ti ti-check"></i> Selesai</button>` : ''}
+              <button class="btn btn-secondary" onclick="editBatch('${f.id}',${JSON.stringify(f).replace(/"/g,'&quot;')})"><i class="ti ti-edit"></i> Edit</button>
+              <button class="btn btn-red" onclick="hapusBatch('${f.id}')"><i class="ti ti-trash"></i></button>
+            </div>
+          </div>`;
+        }).join('')}
+      <div style="padding:8px 12px 16px">
+        <button class="btn btn-primary btn-full" onclick="formBatchBaru()"><i class="ti ti-plus"></i> Tambah Batch Baru</button>
+      </div>`;
+  } catch (e) {
+    ca.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
+  }
+}
+
+function formBatchBaru() {
+  editingId = null;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-form-title').textContent = 'Batch Fermentasi Baru';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Nama Batch</label><input class="form-input" id="f-batch" placeholder="Flores Bajawa #04"></div>
+    <div class="form-group"><label class="form-label">Jenis Proses</label>
+      <select class="form-select" id="f-proses">
+        <option>Honey Process</option><option>Natural</option><option>Washed</option><option>Wine Process</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Berat (kg)</label><input class="form-input" id="f-berat" type="number" placeholder="25"></div>
+      <div class="form-group"><label class="form-label">Tgl Mulai</label><input class="form-input" id="f-tmulai" type="date" value="${today}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Target Selesai</label><input class="form-input" id="f-ttarget" type="date"></div>
+    <div class="form-group"><label class="form-label">Catatan</label><input class="form-input" id="f-catat" placeholder="Opsional..."></div>
+    <button class="btn btn-primary btn-full" onclick="simpanBatch()"><i class="ti ti-check"></i> Simpan</button>`;
+  openModal('modal-form');
+}
+
+async function simpanBatch() {
+  const data = {
+    nama_batch: document.getElementById('f-batch').value,
+    jenis_proses: document.getElementById('f-proses').value,
+    berat_kg: parseFloat(document.getElementById('f-berat').value) || 0,
+    tgl_mulai: document.getElementById('f-tmulai').value,
+    tgl_target: document.getElementById('f-ttarget').value,
+    catatan: document.getElementById('f-catat').value,
+    status: 'aktif'
+  };
+  try {
+    if (editingId) await api('PUT', '/fermentasi/' + editingId, data);
+    else await api('POST', '/fermentasi', data);
+    closeModal('modal-form');
+    toast('Batch tersimpan!');
+    renderRoasting();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function selesaikanBatch(id) {
+  try {
+    await api('PUT', '/fermentasi/' + id, { status: 'selesai', catatan: 'Selesai ' + new Date().toLocaleDateString('id-ID') });
+    toast('Batch selesai!');
+    renderRoasting();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+function editBatch(id, data) {
+  editingId = id;
+  document.getElementById('modal-form-title').textContent = 'Edit Batch';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Nama Batch</label><input class="form-input" id="f-batch" value="${data.nama_batch}"></div>
+    <div class="form-group"><label class="form-label">Jenis Proses</label><input class="form-input" id="f-proses" value="${data.jenis_proses}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Berat (kg)</label><input class="form-input" id="f-berat" type="number" value="${data.berat_kg}"></div>
+      <div class="form-group"><label class="form-label">Tgl Mulai</label><input class="form-input" id="f-tmulai" type="date" value="${data.tgl_mulai}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Target</label><input class="form-input" id="f-ttarget" type="date" value="${data.tgl_target}"></div>
+    <div class="form-group"><label class="form-label">Catatan</label><input class="form-input" id="f-catat" value="${data.catatan||''}"></div>
+    <button class="btn btn-primary btn-full" onclick="simpanBatch()"><i class="ti ti-check"></i> Simpan</button>`;
+  openModal('modal-form');
+}
+
+async function hapusBatch(id) {
+  if (!confirm('Hapus batch ini?')) return;
+  await api('DELETE', '/fermentasi/' + id);
+  toast('Batch dihapus');
+  renderRoasting();
+}
+
+// ─── KAS ────────────────────────────────────────────────────────────────────
+async function renderKas() {
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = '<div class="loading"><div class="spinner"></div> Memuat kas...</div>';
+  try {
+    const kas = await api('GET', '/kas');
+    const today = new Date().toLocaleDateString('id-ID');
+    const todayKas = kas;
+    const masuk = kas.filter(k => k.tipe === 'masuk').reduce((s, k) => s + k.jumlah, 0);
+    const keluar = kas.filter(k => k.tipe === 'keluar').reduce((s, k) => s + k.jumlah, 0);
+    const saldo = masuk - keluar;
+    const masukHari = kas.filter(k => k.tipe === 'masuk' && k.tanggal === new Date().toLocaleDateString('id-ID')).reduce((s, k) => s + k.jumlah, 0);
+    const keluarHari = kas.filter(k => k.tipe === 'keluar' && k.tanggal === new Date().toLocaleDateString('id-ID')).reduce((s, k) => s + k.jumlah, 0);
+
+    ca.innerHTML = `
+      <div class="kas-total-card">
+        <div class="kas-saldo-lbl">Saldo Kas</div>
+        <div class="kas-saldo-val">${fmt(saldo)}</div>
+        <div class="kas-mini-row">
+          <div class="kas-mini">
+            <div class="kas-mini-lbl">Masuk hari ini</div>
+            <div class="kas-mini-val" style="color:#7be0a0">${fmt(masukHari)}</div>
+          </div>
+          <div class="kas-mini">
+            <div class="kas-mini-lbl">Keluar hari ini</div>
+            <div class="kas-mini-val" style="color:#ff8a80">${fmt(keluarHari)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Transaksi Terbaru</div>
+        </div>
+      </div>
+      ${kas.slice(0, 30).map(k => `
+        <div class="kas-entry">
+          <div class="kas-icon ${k.tipe}"><i class="ti ${k.tipe==='masuk'?'ti-arrow-down-left':'ti-arrow-up-right'}"></i></div>
+          <div class="kas-info">
+            <div class="kas-ket">${k.keterangan}</div>
+            <div class="kas-cat">${k.waktu||k.tanggal} · ${k.kategori}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="kas-amt ${k.tipe}">${k.tipe==='masuk'?'+':'-'}${fmt(k.jumlah)}</div>
+            ${USER && USER.role==='owner' ? `<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px" onclick="hapusKas('${k.id}')">hapus</button>` : ''}
+          </div>
+        </div>`).join('')}
+      <div style="height:16px"></div>`;
+
+    // Kas buttons sticky di atas bottomnav
+    const fabHtml = `<div class="kas-fab">
+      <button class="btn btn-green" style="flex:1" onclick="formKas('masuk')"><i class="ti ti-plus"></i> Kas Masuk</button>
+      <button class="btn btn-red" style="flex:1" onclick="formKas('keluar')"><i class="ti ti-minus"></i> Kas Keluar</button>
+    </div>`;
+    ca.insertAdjacentHTML('beforeend', fabHtml);
+  } catch (e) {
+    ca.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
+  }
+}
+
+function formKas(tipe) {
+  document.getElementById('modal-form-title').textContent = tipe === 'masuk' ? 'Input Kas Masuk' : 'Input Kas Keluar';
+  const cats = tipe === 'masuk'
+    ? ['Penjualan','Modal Masuk','Lain-lain']
+    : ['Pembelian Bahan','Operasional','Gaji','Listrik/Air','Lain-lain'];
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Kategori</label>
+      <select class="form-select" id="f-kat">${cats.map(c => `<option>${c}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label class="form-label">Keterangan</label><input class="form-input" id="f-ket" placeholder="Keterangan..."></div>
+    <div class="form-group"><label class="form-label">Jumlah (Rp)</label><input class="form-input" id="f-jml" type="number" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">Metode</label>
+      <select class="form-select" id="f-met"><option>Tunai</option><option>Transfer</option><option>QRIS</option></select>
+    </div>
+    <button class="btn ${tipe==='masuk'?'btn-green':'btn-red'} btn-full" onclick="simpanKas('${tipe}')">
+      <i class="ti ti-check"></i> Simpan
+    </button>`;
+  openModal('modal-form');
+}
+
+async function simpanKas(tipe) {
+  try {
+    await api('POST', '/kas', {
+      tipe,
+      kategori: document.getElementById('f-kat').value,
+      keterangan: document.getElementById('f-ket').value,
+      jumlah: parseInt(document.getElementById('f-jml').value) || 0,
+      metode: document.getElementById('f-met').value
+    });
+    closeModal('modal-form');
+    toast('Kas tersimpan!');
+    renderKas();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function hapusKas(id) {
+  if (!confirm('Hapus entri ini?')) return;
+  await api('DELETE', '/kas/' + id);
+  toast('Dihapus');
+  renderKas();
+}
+
+// ─── LAPORAN ────────────────────────────────────────────────────────────────
+async function renderLaporan() {
+  const ca = document.getElementById('content-area');
+  const today = new Date().toLocaleDateString('id-ID');
+  ca.innerHTML = `
+    <div class="date-filter">
+      <label>Dari</label>
+      <input type="date" id="lap-dari" value="${new Date().toISOString().split('T')[0]}">
+      <label>s/d</label>
+      <input type="date" id="lap-sampai" value="${new Date().toISOString().split('T')[0]}">
+      <button class="btn btn-primary" style="padding:6px 10px" onclick="loadLaporan()"><i class="ti ti-search"></i></button>
+    </div>
+    <div id="lap-content"><div class="loading"><div class="spinner"></div></div></div>`;
+  loadLaporan();
+}
+
+async function loadLaporan() {
+  const dari = document.getElementById('lap-dari').value;
+  const sampai = document.getElementById('lap-sampai').value;
+  const lc = document.getElementById('lap-content');
+  lc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('GET', `/laporan/penjualan?dari=${dari}&sampai=${sampai}`);
+    lc.innerHTML = `
+      <div class="lap-summary">
+        <div class="lap-card"><div class="lap-lbl">Total Penjualan</div><div class="lap-val" style="font-size:14px">${fmt(data.total_penjualan)}</div></div>
+        <div class="lap-card"><div class="lap-lbl">Total Profit</div><div class="lap-val" style="font-size:14px;color:var(--green)">${fmt(data.total_profit)}</div></div>
+        <div class="lap-card"><div class="lap-lbl">HPP Total</div><div class="lap-val" style="font-size:14px">${fmt(data.total_hpp)}</div></div>
+        <div class="lap-card"><div class="lap-lbl">Margin</div><div class="lap-val" style="font-size:14px;color:var(--green)">${data.margin}%</div></div>
+      </div>
+      <div class="section">
+        <div class="section-header"><div class="section-title">Transaksi (${data.jumlah_transaksi})</div></div>
+      </div>
+      ${data.per_menu.length > 0 ? `
+      <div class="card" style="margin:0 12px 8px">
+        <div class="card-title"><i class="ti ti-star"></i> Menu Terlaris</div>
+        ${data.per_menu.slice(0,5).map((m,i) => `
+          <div class="menu-rank-item">
+            <div><div class="rank-name">${i+1}. ${m.nama}</div><div class="rank-qty">${m.qty}x terjual</div></div>
+            <div class="rank-total">${fmt(m.total)}</div>
+          </div>`).join('')}
+      </div>` : ''}
+      ${data.orders.map(o => `
+        <div class="order-item">
+          <div>
+            <div class="order-name">${o.nama_pelanggan}</div>
+            <div class="order-detail">${o.no_order} · ${o.metode_bayar} · ${o.waktu}</div>
+            <div class="order-detail" style="color:var(--green)">Profit ${fmt(o.profit)}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="order-price">${fmt(o.total)}</div>
+            <span class="badge badge-green">Selesai</span>
+          </div>
+        </div>`).join('')}
+      ${data.orders.length === 0 ? '<div class="loading">Tidak ada data</div>' : ''}`;
+  } catch (e) {
+    lc.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
+  }
+}
+
+// ─── SETTING ────────────────────────────────────────────────────────────────
+async function renderSetting() {
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const cfg = await api('GET', '/config');
+    const backups = await api('GET', '/backup/list');
+    ca.innerHTML = `
+      <div class="setting-section">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px">INFO BISNIS</div>
+        <div class="card">
+          <div class="form-group"><label class="form-label">Nama Bisnis</label><input class="form-input" id="s-nama" value="${cfg.nama_bisnis||''}"></div>
+          <div class="form-group"><label class="form-label">Alamat</label><input class="form-input" id="s-alamat" value="${cfg.alamat||''}"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">No. Telepon</label><input class="form-input" id="s-telp" value="${cfg.telp||''}"></div>
+            <div class="form-group"><label class="form-label">Instagram</label><input class="form-input" id="s-ig" value="${cfg.instagram||''}"></div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="simpanConfig()"><i class="ti ti-check"></i> Simpan Info</button>
+        </div>
+
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">PEMBAYARAN</div>
+        <div class="card">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Bank</label><input class="form-input" id="s-bank" value="${cfg.bank_name||''}"></div>
+            <div class="form-group"><label class="form-label">No. Rekening</label><input class="form-input" id="s-bankno" value="${cfg.bank_no||''}"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Atas Nama</label><input class="form-input" id="s-bankan" value="${cfg.bank_an||''}"></div>
+          <button class="btn btn-primary btn-full" onclick="simpanPembayaran()"><i class="ti ti-check"></i> Simpan</button>
+        </div>
+
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">BACKUP & GMAIL</div>
+        <div class="card">
+          <div class="form-group"><label class="form-label">Gmail (untuk kirim backup)</label><input class="form-input" id="s-gmail" type="email" placeholder="email@gmail.com" value="${cfg.gmail_user||''}"></div>
+          <div class="form-group"><label class="form-label">Gmail App Password</label><input class="form-input" id="s-gpass" type="password" placeholder="xxxx xxxx xxxx xxxx" value="${cfg.gmail_pass||''}"></div>
+          <div class="form-group"><label class="form-label">Email Tujuan Backup</label><input class="form-input" id="s-bemail" type="email" placeholder="tujuan@gmail.com" value="${cfg.backup_email||''}"></div>
+          <button class="btn btn-primary btn-full" onclick="simpanGmail()" style="margin-bottom:8px"><i class="ti ti-check"></i> Simpan Gmail</button>
+          <button class="btn btn-secondary btn-full" onclick="kirimBackupEmail()"><i class="ti ti-mail"></i> Kirim Backup ke Email Sekarang</button>
+        </div>
+
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">GOOGLE DRIVE</div>
+        <div class="card">
+          <div class="form-group"><label class="form-label">Credentials JSON (Google Service Account)</label>
+            <textarea class="form-input" id="s-creds" rows="3" placeholder='{"type":"service_account",...}'>${cfg.drive_credentials||''}</textarea>
+          </div>
+          <div class="form-group"><label class="form-label">Folder ID Drive (opsional)</label><input class="form-input" id="s-folder" value="${cfg.drive_folder_id||''}" placeholder="ID folder Google Drive"></div>
+          <button class="btn btn-primary btn-full" onclick="simpanDrive()" style="margin-bottom:8px"><i class="ti ti-check"></i> Simpan Drive</button>
+          <button class="btn btn-secondary btn-full" onclick="kirimBackupDrive()"><i class="ti ti-brand-google-drive"></i> Upload ke Drive Sekarang</button>
+        </div>
+
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">BACKUP MANUAL</div>
+        <div class="card">
+          <button class="btn btn-secondary btn-full" onclick="backupManual()" style="margin-bottom:8px"><i class="ti ti-database-export"></i> Buat Backup Sekarang</button>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px">File Backup (${backups.length})</div>
+          ${backups.slice(0,5).map(b => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--cream)">
+              <div>
+                <div style="font-size:11px;color:var(--text)">${b.nama}</div>
+                <div style="font-size:9px;color:var(--muted)">${Math.round(b.ukuran/1024)} KB</div>
+              </div>
+              <div style="display:flex;gap:5px">
+                <a href="/api/backup/download/${b.nama}" class="btn btn-secondary" style="padding:5px 8px;font-size:10px;text-decoration:none"><i class="ti ti-download"></i></a>
+                <button class="btn btn-primary" style="padding:5px 8px;font-size:10px" onclick="restoreBackup('${b.nama}')"><i class="ti ti-refresh"></i></button>
+              </div>
+            </div>`).join('')}
+        </div>
+
+        ${USER && USER.role === 'owner' ? `
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">USER MANAGEMENT</div>
+        <div class="card">
+          <button class="btn btn-secondary btn-full" onclick="goPage('users')"><i class="ti ti-users"></i> Kelola User</button>
+        </div>` : ''}
+        <div style="height:20px"></div>
+      </div>`;
+  } catch (e) {
+    ca.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
+  }
+}
+
+async function simpanConfig() {
+  try {
+    await api('PUT', '/config', {
+      nama_bisnis: document.getElementById('s-nama').value,
+      alamat: document.getElementById('s-alamat').value,
+      telp: document.getElementById('s-telp').value,
+      instagram: document.getElementById('s-ig').value
+    });
+    toast('Info bisnis tersimpan!');
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function simpanPembayaran() {
+  try {
+    await api('PUT', '/config', {
+      bank_name: document.getElementById('s-bank').value,
+      bank_no: document.getElementById('s-bankno').value,
+      bank_an: document.getElementById('s-bankan').value
+    });
+    toast('Info pembayaran tersimpan!');
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function simpanGmail() {
+  try {
+    await api('PUT', '/config', {
+      gmail_user: document.getElementById('s-gmail').value,
+      gmail_pass: document.getElementById('s-gpass').value,
+      backup_email: document.getElementById('s-bemail').value,
+      backup_aktif: true
+    });
+    toast('Gmail tersimpan!');
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function simpanDrive() {
+  try {
+    let creds = document.getElementById('s-creds').value.trim();
+    await api('PUT', '/config', {
+      drive_credentials: creds,
+      drive_folder_id: document.getElementById('s-folder').value
+    });
+    toast('Google Drive tersimpan!');
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function backupManual() {
+  try {
+    const r = await api('POST', '/backup/manual', {});
+    toast('Backup dibuat: ' + r.file);
+    renderSetting();
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+async function kirimBackupEmail() {
+  toast('Mengirim backup ke email...');
+  try {
+    const r = await api('POST', '/backup/email', {});
+    toast(r.pesan || 'Email terkirim!');
+  } catch (e) { toast('Gagal: ' + e.message); }
+}
+
+async function kirimBackupDrive() {
+  toast('Upload ke Google Drive...');
+  try {
+    const r = await api('POST', '/backup/drive', {});
+    toast('Berhasil upload: ' + r.nama);
+  } catch (e) { toast('Gagal: ' + e.message); }
+}
+
+async function restoreBackup(nama) {
+  if (!confirm('Restore data dari ' + nama + '?\nData saat ini akan ditimpa!')) return;
+  try {
+    const r = await api('POST', '/backup/restore', { nama });
+    toast(r.pesan);
+  } catch (e) { toast('Error: ' + e.message); }
+}
+
+// ─── NOTIF ──────────────────────────────────────────────────────────────────
+async function showNotif() {
+  const data = await api('GET', '/fermentasi');
+  const alerts = data.filter(f => f.alert !== 'done' && f.alert !== 'normal');
+  document.getElementById('modal-notif-body').innerHTML = alerts.length === 0
+    ? '<div class="loading">Tidak ada alert</div>'
+    : alerts.map(f => `
+      <div class="batch-card">
+        <div class="batch-top">
+          <div><div class="batch-name">${f.nama_batch}</div><div class="batch-proses">${f.jenis_proses}</div></div>
+          <span class="badge ${f.sisa_hari<=1?'badge-red':'badge-amber'}">${f.sisa_hari<=0?'Terlambat!':f.sisa_hari+' hari lagi'}</span>
+        </div>
+        <div class="batch-detail">Target: ${f.tgl_target}</div>
+      </div>`).join('');
+  openModal('modal-notif');
+}
+
+// ─── PAGE ROUTING EXTRA ─────────────────────────────────────────────────────
+const pageMap = {
+  home: renderHome, pos: renderPOS, stok: renderStok,
+  roasting: renderRoasting, laporan: renderLaporan,
+  setting: renderSetting, kas: renderKas
+};
+
+function goPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  const titles = {
+    home:'Dashboard', pos:'Kasir POS', stok:'Manajemen Stok',
+    roasting:'Roasting & Fermentasi', laporan:'Laporan',
+    setting:'Pengaturan', kas:'Kas & Keuangan'
+  };
+  document.getElementById('topbar-sub').textContent = titles[page] || 'Bajang Coffee';
+  if (pageMap[page]) pageMap[page]();
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (TOKEN) {
+    startApp();
+  } else {
+    document.getElementById('login-page').style.display = 'flex';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "nama_bisnis": "Bajang Coffee",
+  "alamat": "Lombok, NTB",
+  "telp": "",
+  "instagram": "@bajang.coffee",
+  "bank_name": "BCA",
+  "bank_no": "1234567890",
+  "bank_an": "Bajang Coffee",
+  "backup_email": "",
+  "drive_folder_id": "",
+  "jwt_secret": "bajangcoffee_secret_2026",
+  "backup_aktif": false
+}

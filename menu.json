@@ -1,0 +1,15 @@
+[
+  {"id":"m001","nama":"Cappuccino","kategori":"minuman","harga":28000,"hpp":12000,"satuan":"cup","aktif":true},
+  {"id":"m002","nama":"Americano","kategori":"minuman","harga":22000,"hpp":8000,"satuan":"cup","aktif":true},
+  {"id":"m003","nama":"Café Latte","kategori":"minuman","harga":30000,"hpp":13000,"satuan":"cup","aktif":true},
+  {"id":"m004","nama":"Cold Brew","kategori":"minuman","harga":35000,"hpp":10000,"satuan":"cup","aktif":true},
+  {"id":"m005","nama":"Espresso","kategori":"minuman","harga":18000,"hpp":7000,"satuan":"cup","aktif":true},
+  {"id":"m006","nama":"Mocha","kategori":"minuman","harga":32000,"hpp":14000,"satuan":"cup","aktif":true},
+  {"id":"m007","nama":"Flores Beans 100g","kategori":"beans","harga":45000,"hpp":18000,"satuan":"gram","aktif":true},
+  {"id":"m008","nama":"Toraja Beans 100g","kategori":"beans","harga":50000,"hpp":20000,"satuan":"gram","aktif":true},
+  {"id":"m009","nama":"Gayo Beans 100g","kategori":"beans","harga":48000,"hpp":19000,"satuan":"gram","aktif":true},
+  {"id":"m010","nama":"Flores Bubuk 250g","kategori":"bubuk","harga":75000,"hpp":30000,"satuan":"gram","aktif":true},
+  {"id":"m011","nama":"Toraja Bubuk 250g","kategori":"bubuk","harga":85000,"hpp":35000,"satuan":"gram","aktif":true},
+  {"id":"m012","nama":"Croissant","kategori":"snack","harga":18000,"hpp":8000,"satuan":"pcs","aktif":true},
+  {"id":"m013","nama":"Brownies","kategori":"snack","harga":15000,"hpp":6000,"satuan":"pcs","aktif":true}
+]

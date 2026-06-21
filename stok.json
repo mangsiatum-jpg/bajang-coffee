@@ -1,0 +1,6 @@
+[
+  {"id":"s001","nama":"Flores Bajawa","tipe":"green_bean","grade":"Grade 1","stok_kg":18,"stok_min":10,"harga_beli":80000,"satuan":"kg","createdAt":"2026-06-01"},
+  {"id":"s002","nama":"Toraja Sapan","tipe":"green_bean","grade":"Grade 1","stok_kg":42,"stok_min":10,"harga_beli":90000,"satuan":"kg","createdAt":"2026-06-01"},
+  {"id":"s003","nama":"Gayo Arabika","tipe":"roasted","grade":"Medium","stok_kg":5.2,"stok_min":8,"harga_beli":120000,"satuan":"kg","createdAt":"2026-06-01"},
+  {"id":"s004","nama":"Flores Honey","tipe":"bubuk","grade":"Fine","stok_kg":3.8,"stok_min":2,"harga_beli":150000,"satuan":"kg","createdAt":"2026-06-01"}
+]
