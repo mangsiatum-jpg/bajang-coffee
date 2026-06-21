@@ -1354,16 +1354,25 @@ async function renderSetting() {
             </div>`).join('')}
         </div>
 
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">MANAJEMEN MENU</div>
+        <div class="card">
+          <button class="btn btn-primary btn-full" onclick="formMenuBaru()" style="margin-bottom:10px">
+            <i class="ti ti-plus"></i> Tambah Menu Baru
+          </button>
+          <div id="menu-list-setting"></div>
+        </div>
+
         ${USER && USER.role === 'owner' ? `
         <div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px">USER MANAGEMENT</div>
         <div class="card">
-          <button class="btn btn-secondary btn-full" onclick="goPage('users')"><i class="ti ti-users"></i> Kelola User</button>
+          <button class="btn btn-secondary btn-full" onclick="renderUserManagement()"><i class="ti ti-users"></i> Kelola User</button>
         </div>` : ''}
         <div style="height:20px"></div>
       </div>`;
   } catch (e) {
     ca.innerHTML = `<div class="loading">Gagal: ${e.message}</div>`;
   }
+  setTimeout(() => loadMenuSetting(), 200);
 }
 
 async function simpanConfig() {
@@ -1444,7 +1453,142 @@ async function restoreBackup(nama) {
   } catch (e) { toast('Error: ' + e.message); }
 }
 
-// ─── NOTIF ──────────────────────────────────────────────────────────────────
+// ─── MANAJEMEN MENU ─────────────────────────────────────────────────────────
+async function loadMenuSetting() {
+  const menu = await api('GET', '/menu');
+  const cats = { minuman:'Minuman', beans:'Beans', bubuk:'Kopi Bubuk', snack:'Snack' };
+  const el = document.getElementById('menu-list-setting');
+  if (!el) return;
+  const grouped = {};
+  menu.forEach(m => {
+    if (!grouped[m.kategori]) grouped[m.kategori] = [];
+    grouped[m.kategori].push(m);
+  });
+  el.innerHTML = Object.keys(grouped).map(cat => `
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase">${cats[cat]||cat}</div>
+      ${grouped[cat].map(m => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--cream)">
+          <div>
+            <div style="font-size:11px;font-weight:500;color:${m.aktif?'var(--text)':'var(--muted)'}">${m.nama} ${!m.aktif?'(nonaktif)':''}</div>
+            <div style="font-size:10px;color:var(--muted)">${fmt(m.harga)} · HPP ${fmt(m.hpp)}</div>
+          </div>
+          <div style="display:flex;gap:5px">
+            <button class="btn btn-secondary" style="padding:5px 8px;font-size:10px" onclick="formEditMenu('${m.id}','${m.nama}',${m.harga},${m.hpp},'${m.kategori}','${m.satuan||'cup'}',${m.aktif})">
+              <i class="ti ti-edit"></i>
+            </button>
+            <button class="btn btn-red" style="padding:5px 8px;font-size:10px" onclick="hapusMenu('${m.id}','${m.nama}')">
+              <i class="ti ti-trash"></i>
+            </button>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function formMenuBaru() {
+  editingId = null;
+  document.getElementById('modal-form-title').textContent = 'Tambah Menu Baru';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Nama Menu</label>
+      <input class="form-input" id="fm-nama" placeholder="Cappuccino, V60, dll..."></div>
+    <div class="form-group"><label class="form-label">Kategori</label>
+      <select class="form-select" id="fm-kat">
+        <option value="minuman">Minuman</option>
+        <option value="beans">Kopi Beans</option>
+        <option value="bubuk">Kopi Bubuk</option>
+        <option value="snack">Snack</option>
+      </select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Harga Jual</label>
+        <input class="form-input" id="fm-harga" type="number" placeholder="30000"></div>
+      <div class="form-group"><label class="form-label">HPP</label>
+        <input class="form-input" id="fm-hpp" type="number" placeholder="12000"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Satuan</label>
+      <select class="form-select" id="fm-satuan">
+        <option value="cup">Cup</option>
+        <option value="pcs">Pcs</option>
+        <option value="gram">Gram</option>
+        <option value="kg">Kg</option>
+        <option value="porsi">Porsi</option>
+      </select></div>
+    <button class="btn btn-primary btn-full" onclick="simpanMenu()">
+      <i class="ti ti-check"></i> Simpan Menu</button>`;
+  openModal('modal-form');
+}
+
+function formEditMenu(id, nama, harga, hpp, kat, satuan, aktif) {
+  editingId = id;
+  document.getElementById('modal-form-title').textContent = 'Edit Menu';
+  document.getElementById('modal-form-body').innerHTML = `
+    <div class="form-group"><label class="form-label">Nama Menu</label>
+      <input class="form-input" id="fm-nama" value="${nama}"></div>
+    <div class="form-group"><label class="form-label">Kategori</label>
+      <select class="form-select" id="fm-kat">
+        <option value="minuman" ${kat==='minuman'?'selected':''}>Minuman</option>
+        <option value="beans" ${kat==='beans'?'selected':''}>Kopi Beans</option>
+        <option value="bubuk" ${kat==='bubuk'?'selected':''}>Kopi Bubuk</option>
+        <option value="snack" ${kat==='snack'?'selected':''}>Snack</option>
+      </select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Harga Jual</label>
+        <input class="form-input" id="fm-harga" type="number" value="${harga}"></div>
+      <div class="form-group"><label class="form-label">HPP</label>
+        <input class="form-input" id="fm-hpp" type="number" value="${hpp}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Satuan</label>
+      <select class="form-select" id="fm-satuan">
+        <option value="cup" ${satuan==='cup'?'selected':''}>Cup</option>
+        <option value="pcs" ${satuan==='pcs'?'selected':''}>Pcs</option>
+        <option value="gram" ${satuan==='gram'?'selected':''}>Gram</option>
+        <option value="kg" ${satuan==='kg'?'selected':''}>Kg</option>
+        <option value="porsi" ${satuan==='porsi'?'selected':''}>Porsi</option>
+      </select></div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-primary" style="flex:1" onclick="simpanMenu()"><i class="ti ti-check"></i> Simpan</button>
+      <button class="btn ${aktif?'btn-secondary':'btn-green'}" style="flex:1" onclick="toggleMenu('${id}',${aktif})">
+        <i class="ti ti-${aktif?'eye-off':'eye'}"></i> ${aktif?'Nonaktifkan':'Aktifkan'}
+      </button>
+    </div>`;
+  openModal('modal-form');
+}
+
+async function simpanMenu() {
+  const data = {
+    nama: document.getElementById('fm-nama').value,
+    kategori: document.getElementById('fm-kat').value,
+    harga: parseInt(document.getElementById('fm-harga').value) || 0,
+    hpp: parseInt(document.getElementById('fm-hpp').value) || 0,
+    satuan: document.getElementById('fm-satuan').value,
+    aktif: true
+  };
+  if (!data.nama) { toast('Nama menu harus diisi'); return; }
+  try {
+    if (editingId) await api('PUT', '/menu/' + editingId, data);
+    else await api('POST', '/menu', data);
+    closeModal('modal-form');
+    toast(editingId ? 'Menu diupdate!' : 'Menu ditambah!');
+    loadMenuSetting();
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function hapusMenu(id, nama) {
+  if (!confirm('Nonaktifkan menu "' + nama + '"?')) return;
+  try {
+    await api('DELETE', '/menu/' + id);
+    toast('Menu dinonaktifkan');
+    loadMenuSetting();
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+async function toggleMenu(id, aktif) {
+  try {
+    await api('PUT', '/menu/' + id, { aktif: !aktif });
+    closeModal('modal-form');
+    toast(aktif ? 'Menu dinonaktifkan' : 'Menu diaktifkan');
+    loadMenuSetting();
+  } catch(e) { toast('Error: ' + e.message); }
+}
 async function showNotif() {
   const data = await api('GET', '/fermentasi');
   const alerts = data.filter(f => f.alert !== 'done' && f.alert !== 'normal');
