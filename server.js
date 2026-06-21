@@ -10,12 +10,12 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = path.join(__dirname);
 const BACKUP_DIR = path.join(__dirname, 'backup');
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname)));
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
@@ -586,7 +586,7 @@ app.post('/api/backup/restore', authMiddleware(['owner']), (req, res) => {
 // ─── CATCH ALL → SPA ──────────────────────────────────────────────────────────
 
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(PORT, () => {
