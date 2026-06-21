@@ -12,4 +12,5 @@
   {"id":"m011","nama":"Toraja Bubuk 250g","kategori":"bubuk","harga":85000,"hpp":35000,"satuan":"gram","aktif":true},
   {"id":"m012","nama":"Croissant","kategori":"snack","harga":18000,"hpp":8000,"satuan":"pcs","aktif":true},
   {"id":"m013","nama":"Brownies","kategori":"snack","harga":15000,"hpp":6000,"satuan":"pcs","aktif":true}
+  { "id":"m014","nama":"V60 Pour Over","kategori":"minuman","harga":35000,"hpp":15000,"satuan":"cup","aktif":true}
 ]
